@@ -1,0 +1,31 @@
+# Auto-detectar arquivos de texto e normalizar para LF
+* text=auto eol=lf
+
+# Enforce
+
+## Common attributes
+
+*.adoc        text eol=lf
+*.css         text eol=lf
+*.crt         text eol=lf
+*.example     text eol=lf
+*.js          text eol=lf
+*.json        text eol=lf
+*.md          text eol=lf
+*.mjs         text eol=lf
+*.properties  text eol=lf
+*.sh          text eol=lf
+
+## keystores
+*.key         binary
+*.p12         binary
+*.jceks       binary
+*.jks         binary
+
+## imagens
+*.jpg         binary
+*.jpeg        binary
+*.png         binary
+*.gif         binary
+*.ico         binary
+*.webp        binary
