@@ -1,0 +1,31 @@
+{
+  "name": "@trepr/mcp-gitlab",
+  "version": "1.0.0",
+  "description": "MCP Server do GitLab customizado com defaults e OAuth para o TRE-PR",
+  "type": "module",
+  "bin": {
+    "mcp-gitlab": "bin/run.mjs"
+  },
+  "files": [
+    "bin/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "@trepr:registry": "https://nexus.tre-pr.jus.br/repository/npm-hosted/"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@zereight/mcp-gitlab": "^2.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "gitlab",
+    "tre-pr",
+    "oauth",
+    "agent-plugins"
+  ],
+  "author": "SDS/TRE-PR",
+  "license": "UNLICENSED"
+}
