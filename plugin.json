@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "gitlab-plugin",
+  "version": "2.0.0",
+  "description": "Integração com o GitLab interno do TRE-PR para gerenciar projetos, merge requests, issues, pipelines, wiki, releases, milestones e mais.",
+  "author": {
+    "name": "SDS/TRE-PR"
+  },
+  "keywords": [
+    "gitlab",
+    "tre-pr",
+    "merge-request",
+    "pipeline",
+    "ci-cd",
+    "issues"
+  ]
+}
