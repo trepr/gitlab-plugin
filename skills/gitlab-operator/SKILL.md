@@ -4,7 +4,7 @@ description: >-
   Operates the gitlab MCP server to manage GitLab projects, merge request workflows,
   pipeline monitoring, issue tracking, wiki pages, release management, and milestone planning on the TRE-PR internal GitLab instance.
   Use when the user asks to list projects, inspect/review merge requests, create/close issues, check pipeline logs, manage wiki, releases, or milestones.
-version: 1
+version: 2
 ---
 
 # GitLab Operator Skill
