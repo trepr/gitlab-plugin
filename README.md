@@ -10,8 +10,14 @@ O MCP server utilizado é o `@trepr/mcp-gitlab`, disponibilizado internamente no
 
 ```text
 gitlab-plugin/
+├── .env.example                    # Modelo para configuração das credenciais OAuth
 ├── plugin.json                     # Manifesto do plugin (Agent Plugins v1.0.0)
 ├── mcp.json                        # Configuração do MCP server (@trepr/mcp-gitlab)
+├── packages/
+│   └── mcp-gitlab/                 # Pacote npm wrapper (@trepr/mcp-gitlab) publicado no Nexus
+│       ├── bin/run.mjs             # Script de execução com resolução de credenciais
+│       ├── package.json            # Metadados e dependências do pacote npm
+│       └── README.md               # Instruções de publicação no Nexus
 ├── skills/
 │   └── gitlab-operator/
 │       ├── SKILL.md                # Ponto focal com matriz de decisão
@@ -21,6 +27,10 @@ gitlab-plugin/
 ├── README.md                       # Documentação do plugin
 └── CHANGELOG.md                    # Histórico de versões
 ```
+
+> [!IMPORTANT]
+> **Não coloque o arquivo `.env` na raiz deste plugin!**
+> O Kiro e gerenciadores de plugins substituem os arquivos do plugin durante as atualizações, o que remove qualquer arquivo local criado na pasta do plugin. Utilize o arquivo global `~/.gitlab-plugin.env`, variáveis de ambiente do sistema ou o `.env` na raiz do seu workspace.
 
 ---
 
@@ -112,7 +122,7 @@ O plugin inclui a skill [`skills/gitlab-operator/SKILL.md`](skills/gitlab-operat
 ### Pipelines de CI/CD
 - *"Mostrar o status da última pipeline do projeto sds/sistemas/meu-projeto."*
 - *"Ver o log do job 'build' que falhou na pipeline #123."*
-- *"Retry da pipeline #123 do projeto sds/sistemas/meu-projeto."*
+- *"Executar novamente a pipeline #123 do projeto sds/sistemas/meu-projeto."*
 
 ### Wiki, Releases e Milestones
 - *"Listar páginas wiki do projeto sds/sistemas/meu-projeto."*
@@ -142,6 +152,29 @@ O plugin inclui a skill [`skills/gitlab-operator/SKILL.md`](skills/gitlab-operat
   netstat -ano | findstr :8888
   ```
 
+### Erro: "GITLAB_OAUTH_CLIENT_ID não está configurado" ou variáveis não encontradas
+- **Causa:** O MCP server não encontrou o Client ID nas variáveis de ambiente, no arquivo global `~/.gitlab-plugin.env` ou no `.env` do workspace.
+- **Atenção sobre atualizações:** Se você configurou um arquivo `.env` dentro da pasta do plugin, ele foi removido durante a atualização do plugin realizada pelo Kiro. **Nunca salve o arquivo `.env` na raiz do plugin.**
+- **Como configurar e resolver:**
+  1. **Arquivo Global do Usuário (Recomendado):** Crie o arquivo `~/.gitlab-plugin.env` (Linux/macOS) ou `%USERPROFILE%\.gitlab-plugin.env` (Windows):
+     ```env
+     GITLAB_OAUTH_CLIENT_ID=<seu_client_id>
+     GITLAB_OAUTH_CLIENT_SECRET=<seu_client_secret> # Apenas se a aplicação for confidencial
+     ```
+  2. **Variáveis de Ambiente do Sistema:**
+     - **Linux/macOS:**
+       ```bash
+       export GITLAB_OAUTH_CLIENT_ID="<seu_client_id>"
+       export GITLAB_OAUTH_CLIENT_SECRET="<seu_client_secret>" # Se confidencial
+       ```
+     - **Windows (PowerShell):**
+       ```powershell
+       [System.Environment]::SetEnvironmentVariable('GITLAB_OAUTH_CLIENT_ID', '<seu_client_id>', 'User')
+       [System.Environment]::SetEnvironmentVariable('GITLAB_OAUTH_CLIENT_SECRET', '<seu_client_secret>', 'User') # Se confidencial
+       ```
+  3. **Arquivo `.env` na Raiz do Workspace:** Crie o `.env` na raiz do projeto/workspace onde você está trabalhando (e não dentro da pasta do plugin).
+  4. Após definir as variáveis, reinicie o Kiro ou reconecte o servidor MCP para que as configurações tenham efeito.
+
 ---
 
 ## Variáveis de Ambiente e Configuração
@@ -152,7 +185,15 @@ O pacote `@trepr/mcp-gitlab` é executado via `npx` e resolve as credenciais OAu
 
 Configure as variáveis através de qualquer uma das opções abaixo:
 
-1. **Variáveis de Ambiente do Sistema:**
+1. **Arquivo Global do Usuário (Recomendado e Persistente):**
+   Crie o arquivo `~/.gitlab-plugin.env` no diretório de usuário (Linux/macOS: `~/.gitlab-plugin.env`, Windows: `%USERPROFILE%\.gitlab-plugin.env`):
+   ```env
+   GITLAB_OAUTH_CLIENT_ID=<seu_client_id>
+   GITLAB_OAUTH_CLIENT_SECRET=<seu_client_secret> # Necessário apenas se a aplicação for confidencial
+   ```
+   Esta opção é a mais indicada, pois permanece intacta durante atualizações do plugin e funciona em qualquer workspace.
+
+2. **Variáveis de Ambiente do Sistema:**
    - Linux/macOS:
      ```bash
      export GITLAB_OAUTH_CLIENT_ID="<seu_client_id>"
@@ -163,9 +204,13 @@ Configure as variáveis através de qualquer uma das opções abaixo:
      [System.Environment]::SetEnvironmentVariable('GITLAB_OAUTH_CLIENT_ID', '<seu_client_id>', 'User')
      [System.Environment]::SetEnvironmentVariable('GITLAB_OAUTH_CLIENT_SECRET', '<seu_client_secret>', 'User') # Se confidencial
      ```
-2. **Arquivo `.env` Local:** Crie um arquivo `.env` na raiz do workspace ou plugin (veja `.env.example`).
-3. **Diretório Persistente do Usuário:** `${PLUGIN_DATA}/.env` (gerenciado pelo cliente Agent Plugins).
-4. **Arquivo Global do Usuário:** `~/.gitlab-plugin.env`.
+
+3. **Arquivo `.env` na Raiz do Workspace:**
+   Crie um arquivo `.env` na raiz do seu projeto/workspace em desenvolvimento com base no `.env.example`.
+
+> [!WARNING]
+> **Não coloque o arquivo `.env` na raiz do diretório do plugin!**
+> Atualizações no Kiro substituem a pasta do plugin, o que resulta na exclusão de arquivos criados localmente nesse diretório. Mantenha seu `.env` na raiz do workspace do projeto ou utilize o arquivo global `~/.gitlab-plugin.env`.
 
 > [!NOTE]
 > `GITLAB_OAUTH_CLIENT_SECRET` é **obrigatório apenas se** a aplicação OAuth no GitLab tiver sido criada com a opção **"Confidential"** marcada. Para aplicações públicas (não-confidenciais), deixe em branco.

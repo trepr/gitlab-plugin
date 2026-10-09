@@ -57,10 +57,10 @@ Pattern matching and resolution procedures for errors encountered during GitLab 
 ## 6. Client ID Not Configured
 
 - **Pattern:** Error message contains `"[gitlab-plugin] ERRO: GITLAB_OAUTH_CLIENT_ID não está configurado"` ou similar.
-- **Root Cause:** The `GITLAB_OAUTH_CLIENT_ID` environment variable was not set in the user's environment, `.env`, `${PLUGIN_DATA}/.env`, or `~/.gitlab-plugin.env`.
-- **Action:** Instruct the user to set `GITLAB_OAUTH_CLIENT_ID` in their environment or in a `.env` file (see `.env.example`).
+- **Root Cause:** The `GITLAB_OAUTH_CLIENT_ID` environment variable was not set in the user's environment, `~/.gitlab-plugin.env`, or `.env` in the current workspace.
+- **Action:** Instruct the user to set `GITLAB_OAUTH_CLIENT_ID` globally (`~/.gitlab-plugin.env`), in their environment, or in a `.env` file in the workspace (never in the plugin directory).
 - **Message:**
-  > "O Client ID do GitLab não está configurado. Por favor, defina a variável `GITLAB_OAUTH_CLIENT_ID` no seu sistema ou crie um arquivo `.env` na raiz do plugin com base no `.env.example`."
+  > "O Client ID do GitLab não está configurado. Por favor, configure o arquivo global `~/.gitlab-plugin.env`, defina a variável `GITLAB_OAUTH_CLIENT_ID` no seu sistema ou crie um arquivo `.env` na raiz do seu workspace (nunca na raiz do plugin, pois atualizações removem o arquivo)."
 
 ---
 
